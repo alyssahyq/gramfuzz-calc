@@ -22,16 +22,20 @@ class NRef(Ref):
 class NDef(Def):
     cat = "name_def"
 
-left_number = Join(NRef("left_associative_operator"),NRef("number"), sep=" ")
-test = Join(left_number, max=5, sep=" ")
+#repeating patterns for arithmetic operation
+arithmetic = Join(NRef("arithmetic_operator"),NRef("number"), sep=" ")
+arithmetic_patterns = Join(arithmetic, max=5, sep=" ")
+
+#adding parenthesis for rithmetic operation
+arithmetic_paren = Join("(",NRef("number"),arithmetic_patterns,")")
 
 Def("bc_input",
     Join(
         NRef("number"),
-        test,
-        Opt(NRef("relational_expressions")),
+        arithmetic_patterns,
+        Opt(NRef("relational_operator")),
         NRef("number"),
-        test,
+        arithmetic_patterns,
     sep=" "),
     cat="bc_input"
 )
@@ -48,7 +52,7 @@ Def("bc_input",
         (0.10,    [-100000.0, -1000.0]),
     ]'''
 NDef("number",Float(value=None))
-NDef("left_associative_operator",Or('+','-','*','%','/'))
-NDef("right_associative", Or('='))
-NDef("relational_expressions",Or('<','<=','>','>=','==','!='))
-NDef("boolean_expressions",Or('||','&&'))
+NDef("arithmetic_operator",Or('+','-','*','%','/'))
+NDef("relational_operator",Or('<','<=','>','>=','==','!='))
+NDef("boolean_operator",Or('||','&&'))
+NDef("assignment_operators", Or('='))

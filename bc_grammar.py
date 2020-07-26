@@ -1,4 +1,5 @@
 from gramfuzz.fields import *
+from random import randrange
 
 '''bc Precedence
 https://www.gnu.org/software/bc/manual/html_mono/bc.html
@@ -21,13 +22,18 @@ class NRef(Ref):
 class NDef(Def):
     cat = "name_def"
 
-Def("name",
+left_number = Join(NRef("left_associative_operator"),NRef("number"), sep=" ")
+test = Join(left_number, max=5, sep=" ")
+
+Def("bc_input",
     Join(
         NRef("number"),
-        NRef("left_associative_operator"),
+        test,
+        Opt(NRef("relational_expressions")),
         NRef("number"),
+        test,
     sep=" "),
-    cat="name"
+    cat="bc_input"
 )
 '''class Float(Int):
     """Defines a float ``Field`` with odds that define float
@@ -42,5 +48,7 @@ Def("name",
         (0.10,    [-100000.0, -1000.0]),
     ]'''
 NDef("number",Float(value=None))
-NDef("left_associative_operator",Or('||','&&','<','<=','>','>=','==','!=','+','-','*','%','/'))
+NDef("left_associative_operator",Or('+','-','*','%','/'))
 NDef("right_associative", Or('='))
+NDef("relational_expressions",Or('<','<=','>','>=','==','!='))
+NDef("boolean_expressions",Or('||','&&'))

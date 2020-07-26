@@ -2,6 +2,6 @@ import gramfuzz
 
 fuzzer = gramfuzz.GramFuzzer()
 fuzzer.load_grammar("./bc_grammar.py")
-exprs = fuzzer.gen(cat="expr", num=10)
-for expr in exprs:
-    print(expr.decode("utf-8"))
+bc_inputs = fuzzer.gen(cat="bc_input", num=10)
+for bc_input in bc_inputs:
+    print(bc_input.decode("utf-8"))

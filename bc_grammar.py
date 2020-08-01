@@ -22,20 +22,21 @@ class NRef(Ref):
 class NDef(Def):
     cat = "name_def"
 
+#arith = arithmetic
 #repeating patterns for arithmetic operation
-arithmetic = Join(NRef("arithmetic_operator"),NRef("number"), sep=" ")
-arithmetic_patterns = Join(arithmetic, max=5, sep=" ")
-
+arith = Join(NRef("arithmetic_operator"),NRef("number"), sep=" ")
+arith_patterns = Join(arith, max=3, sep=" ")
 #adding parenthesis for rithmetic operation
-arithmetic_paren = Join("(",NRef("number"),arithmetic_patterns,")")
-
+arith_paren = Join("(",NRef("number"),arith_patterns,")", sep=" ")
+arith_number_paren = Join(NRef("arithmetic_operator"),Or(arith_paren,NRef("number")), sep=" ")
+arith_number_paren_patterns = Join(arith_number_paren, max=5, sep=" ")
+#stack to process parenth
 Def("bc_input",
     Join(
-        NRef("number"),
-        arithmetic_patterns,
-        Opt(NRef("relational_operator")),
-        NRef("number"),
-        arithmetic_patterns,
+        Or(arith_paren,NRef("number")),
+        arith_number_paren_patterns,
+        Opt(Join(NRef("relational_operator"),Or(arith_paren,NRef("number")), sep=" ")),
+        arith_number_paren_patterns,
     sep=" "),
     cat="bc_input"
 )

@@ -22,20 +22,27 @@ class NRef(Ref):
 class NDef(Def):
     cat = "name_def"
 
+NDef("int", Int(value=None))
+NDef("float",Float(value=None))
+NDef("arithmetic_operator",Or('+','-','*','%','/','^'))
+NDef("relational_operator",Or('<','<=','>','>=','==','!='))
+NDef("boolean_operator",Or('||','&&'))
+NDef("assignment_operators", Or('='))
 #arith = arithmetic
 #repeating patterns for arithmetic operation
-arith = Join(NRef("arithmetic_operator"),NRef("number"), sep=" ")
-arith_patterns = Join(arith, max=3, sep=" ")
+arith = Join(NRef("arithmetic_operator"),NRef("int"), sep=" ")
+arith_patterns = Join(arith, max=20000, sep=" ")
 #adding parenthesis for rithmetic operation
-arith_paren = Join("(",NRef("number"),arith_patterns,")", sep=" ")
-arith_number_paren = Join(NRef("arithmetic_operator"),Or(arith_paren,NRef("number")), sep=" ")
-arith_number_paren_patterns = Join(arith_number_paren, max=5, sep=" ")
+arith_paren = Join("(",NRef("int"),arith_patterns,")", sep=" ")
+arith_number_paren = Join(NRef("arithmetic_operator"),Or(arith_paren,NRef("int")), sep=" ")
+arith_number_paren_patterns = Join(arith_number_paren, max=20000, sep=" ")
+
 #stack to process parenth
 Def("bc_input",
     Join(
-        Or(arith_paren,NRef("number")),
+        Or(arith_paren,NRef("int")),
         arith_number_paren_patterns,
-        Opt(Join(NRef("relational_operator"),Or(arith_paren,NRef("number")), sep=" ")),
+        Opt(Join(NRef("relational_operator"),Or(arith_paren,NRef("int")), sep=" ")),
         arith_number_paren_patterns,
     sep=" "),
     cat="bc_input"
@@ -52,8 +59,3 @@ Def("bc_input",
         (0.10,    [1000.0, 100000.0]),
         (0.10,    [-100000.0, -1000.0]),
     ]'''
-NDef("number",Float(value=None))
-NDef("arithmetic_operator",Or('+','-','*','%','/'))
-NDef("relational_operator",Or('<','<=','>','>=','==','!='))
-NDef("boolean_operator",Or('||','&&'))
-NDef("assignment_operators", Or('='))

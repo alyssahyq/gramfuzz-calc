@@ -31,11 +31,11 @@ NDef("assignment_operators", Or('='))
 #arith = arithmetic
 #repeating patterns for arithmetic operation
 arith = Join(NRef("arithmetic_operator"),NRef("int"), sep=" ")
-arith_patterns = Join(arith, max=20000, sep=" ")
+arith_patterns = Join(arith, max=200, sep=" ")
 #adding parenthesis for rithmetic operation
 arith_paren = Join("(",NRef("int"),arith_patterns,")", sep=" ")
 arith_number_paren = Join(NRef("arithmetic_operator"),Or(arith_paren,NRef("int")), sep=" ")
-arith_number_paren_patterns = Join(arith_number_paren, max=20000, sep=" ")
+arith_number_paren_patterns = Join(arith_number_paren, max=200, sep=" ")
 
 #stack to process parenth
 Def("bc_input",

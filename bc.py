@@ -16,7 +16,7 @@ def generate_input():
     fuzzer.load_grammar("./bc_grammar.py")
     for i in range(100):
         print('Generating: input{}'.format(i))
-        bc_inputs = fuzzer.gen(cat="bc_input", num=10)
+        bc_inputs = fuzzer.gen(cat="bc_input", num=1000)
         with open('input{}'.format(i), 'w') as f:
             for bc_input in bc_inputs:
                 f.write(bc_input.decode('utf-8') + '\n')

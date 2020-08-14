@@ -47,15 +47,3 @@ Def("bc_input",
     sep=" "),
     cat="bc_input"
 )
-'''class Float(Int):
-    """Defines a float ``Field`` with odds that define float
-    values
-    """
-    odds = [
-        (0.75,    [-100.0,100.0]),
-        (0.05,    0),
-        (0.10,    [100.0, 1000.0]),
-        (0.10,    [-1000.0, 100.0]),
-        (0.10,    [1000.0, 100000.0]),
-        (0.10,    [-100000.0, -1000.0]),
-    ]'''

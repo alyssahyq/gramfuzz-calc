@@ -23,7 +23,8 @@ def generate_input():
             for bc_input in bc_inputs:
                 f.write(bc_input.decode('utf-8') + '\n')
             f.write('quit')
-        print('Finished: input{}'.format(i))
+        #print('Finished: input{}'.format(i))
+    print('Finished generated inputs')
 
 def print_time(starttime):
     endtime = datetime.datetime.now()
@@ -44,10 +45,6 @@ if __name__ == "__main__":
     exception_sum = 0
     starttime = datetime.datetime.now()
     while True:
-        print('Loop ', count)
-        print('tested_sum', tested_sum)
-        print('error_sum', error_sum)
-        print('exception_sum', exception_sum)
         generate_input()
         result = ''
         runtime_error = 0
@@ -58,6 +55,7 @@ if __name__ == "__main__":
                 # result = subprocess.check_output(['python', 'except.py'], stderr=subprocess.STDOUT).decode('utf-8')
                 result = subprocess.check_output('bc -l statement_input{}'.format(i), shell=True, stderr=subprocess.STDOUT).decode(
                     'utf-8')
+                print("input",i,"tested.")
             except Exception as e:
                 result = 'Exception: {}'.format(e);
             finally:
@@ -73,7 +71,14 @@ if __name__ == "__main__":
         tested_sum = tested_sum + test_num
         error_sum = error_sum + runtime_error
         exception_sum = exception_sum + exception
-        print('tested:', tested_sum, 'error:', error_sum, 'exception:', exception_sum)
+        count = count+1
+        print('Loop ', count)
+        print('tested_sum', tested_sum)
+        print('error_sum', error_sum)
+        print('exception_sum', exception_sum)
+        #print('tested:', tested_sum, 'error:', error_sum, 'exception:', exception_sum)
         print_time(starttime)
         if(exception_sum > 0):
             break
+
+

@@ -1,84 +1,79 @@
-'''
-@Title:
-@Prject:
-@Description:
-@Author: Sujia Yin
-@Date: 2020-07-27 16:31:34
-@Version: 1.0
-'''
-import os
-import subprocess
-import gramfuzz
-import datetime
+from gramfuzz.fields import *
+from random import randrange
 
-file_number = 5 # In every loop, how many input file will be generated and tested.
-input_number = 5 # In every file, how many input will be generated according to grammar.
-def generate_input():
-    fuzzer = gramfuzz.GramFuzzer()
-    fuzzer.load_grammar("./statement_grammar.py")
-    for i in range(file_number):
-        print('Generating: input{}'.format(i))
-        bc_inputs = fuzzer.gen(cat="bc_input", num=input_number)
-        with open('statement_input{}'.format(i), 'w') as f:
-            for bc_input in bc_inputs:
-                f.write(bc_input.decode('utf-8') + '\n')
-            f.write('quit')
-        #print('Finished: input{}'.format(i))
-    print('Finished generated inputs')
-
-def print_time(starttime):
-    endtime = datetime.datetime.now()
-    second = (endtime-starttime).seconds
-    minute = int(second/60)
-    hour = int(minute/60)
-    if second<60:
-        print('Elapsed time: ',second,' seconds.')
-    elif minute<60:
-        print('Elapsed time: ',minute,' minutes ',second%60,' seconds.')
-    else:
-        print('Elapsed time: ',hour,' hours ',minute%60,' minutes ',second%60,' seconds.')
-
-if __name__ == "__main__":
-    count = 0
-    tested_sum = 0
-    error_sum = 0
-    exception_sum = 0
-    starttime = datetime.datetime.now()
-    while True:
-        generate_input()
-        result = ''
-        runtime_error = 0
-        exception = 0
-        test_num = 0
-        for i in range(file_number):
-            try:
-                # result = subprocess.check_output(['python', 'except.py'], stderr=subprocess.STDOUT).decode('utf-8')
-                result = subprocess.check_output('bc -l statement_input{}'.format(i), shell=True, stderr=subprocess.STDOUT).decode(
-                    'utf-8')
-                print("input",i,"tested.")
-            except Exception as e:
-                result = 'Exception: {}'.format(e);
-            finally:
-                # print(result)
-                res = result.split('\n')
-                for line in res:
-                    test_num += 1
-                    if 'error' in line:
-                        runtime_error += 1
-                    if 'Exception' in line:
-                        print(line)
-                        exception += 1
-        tested_sum = tested_sum + test_num
-        error_sum = error_sum + runtime_error
-        exception_sum = exception_sum + exception
-        count = count+1
-        print('Loop ', count)
-        print('tested_sum', tested_sum)
-        print('error_sum', error_sum)
-        print('exception_sum', exception_sum)
-        #print('tested:', tested_sum, 'error:', error_sum, 'exception:', exception_sum)
-        print_time(starttime)
-        if(exception_sum > 0):
-            break
+'''bc Precedence
+https://www.gnu.org/software/bc/manual/html_mono/bc.html
+The expression precedence is as follows: (lowest to highest)'''
 
 
+class NRef(Ref):
+    cat = "name_def"
+class NDef(Def):
+    cat = "name_def"
+
+statement_max = 5 # Maximum of the times the elements occur in this part randomly
+
+NDef('int',Int(odds = [(0.05,[0]),(0.85,[-100,100])])) # INT_MAX
+array_ind = Or(0,1,2,3,4,5,6,7,8,9)
+function_name = Or('fun0','fun1','fun2','fun3','fun4','fun5','fun6','fun7','fun8','fun9')
+variable_name = Or('a','b','c','d')
+variable_odd = Or(Join(variable_name,'[]',sep=''),
+                  variable_name,variable_name,variable_name,variable_name,variable_name,variable_name,
+                  Join(variable_name,'[',array_ind,']',sep=''))
+var_post = Join(variable_odd,Or('++','--'),sep='')
+var_pre = Join(Or('++','--'),variable_odd,sep='')
+
+assign_operation = Or('=','+=','-=','*=','/=','^=','%=')
+arith_operation = Or('+','-','*','/','%','^')
+arith_expr = Join(Or(variable_odd,NRef('int')),
+                  Join(Join(arith_operation,Or(variable_odd,NRef('int')),sep='')
+                      ,max=statement_max,sep='')
+                  ,sep='')
+assign = Or(Join(variable_odd,assign_operation,Or(variable_odd,NRef('int')),sep=' '))
+
+expr_operation = Or('>','<','>=','<=','==','!=')
+condition = Join(arith_expr,expr_operation,arith_expr,sep=' ')
+
+auto = Join('auto',variable_odd,Opt(Join(',',variable_odd,sep=' ')),sep=' ')
+
+if_else = Join('if (',condition,'){','\n',
+               Join(Or(auto,assign,assign,assign,assign,assign),max=statement_max,sep='\n'),'}','\n',
+               Opt(Join('else{','\n',
+                        Join(Or(auto,assign,assign,assign,assign,assign),max=statement_max,sep='\n'),'}',sep='')),
+               sep=''
+)
+
+for_loop = Join('for(',Or(assign,variable_odd),';',condition,';',assign,'){','\n',
+                Join(Or(auto,assign),max=5,sep='\n'),'\n',
+                Opt(Join('if (',condition,'){','\n',
+                         Join(Or(auto,assign,assign,assign,assign,assign,assign,'break','continue'),max=statement_max,sep='\n'),'}','\n',
+                         Opt(Join('else{','\n',
+                                  Join(Or(auto,assign,'break','continue'),max=statement_max,sep='\n'),'}',sep='')),sep='')),
+                '}'
+                ,sep='')
+
+while_loop = Join('while(',condition,'){','\n',
+                Join(Or(auto,assign,assign,assign,assign,assign,assign),'\n',max=statement_max,sep='\n'),'\n',
+                Opt(Join('if (',condition,'){','\n',
+                         Join(Or(auto,assign,assign,assign,assign,assign,'break','continue'),max=statement_max,sep='\n'),'}','\n',
+                         Opt(Join('else{','\n',
+                                  Join(Or(auto,assign,assign,assign,assign,assign,assign,'break','continue'),max=statement_max,sep='\n'),'}',sep='')),sep='')),
+                '}'
+                ,sep='')
+
+variable_list = Join(variable_odd,
+                     Opt(Join(
+                         Join(',',variable_odd,sep='')
+                         ,max=statement_max,sep=''))
+                     ,sep='')
+
+#max in def_fun: in
+def_fun = Join('define ',function_name,'(',variable_list,'){','\n',
+               Join(Or(assign,assign,assign,assign,assign,auto,if_else),max=statement_max,sep='\n'),
+               Opt(Join('return ',Or(variable_odd,NRef('int')),'\n',sep='')),'}'
+               ,sep='')
+
+Def("bc_input",
+    Join(Or(def_fun,assign,auto,if_else),max=statement_max,sep="\n"),
+    cat="bc_input"
+)

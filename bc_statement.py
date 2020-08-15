@@ -11,7 +11,7 @@ import subprocess
 import gramfuzz
 import datetime
 
-file_number = 10 # In every loop, how many input file will be generated and tested.
+file_number = 5 # In every loop, how many input file will be generated and tested.
 input_number = 5 # In every file, how many input will be generated according to grammar.
 def generate_input():
     fuzzer = gramfuzz.GramFuzzer()
@@ -25,6 +25,17 @@ def generate_input():
             f.write('quit')
         print('Finished: input{}'.format(i))
 
+def print_time(starttime):
+    endtime = datetime.datetime.now()
+    second = (endtime-starttime).seconds
+    minute = int(second/60)
+    hour = int(minute/60)
+    if second<60:
+        print('Elapsed time: ',second,' seconds.')
+    elif minute<60:
+        print('Elapsed time: ',minute,' minutes ',second%60,' seconds.')
+    else:
+        print('Elapsed time: ',hour,' hours ',minute%60,' minutes ',second%60,' seconds.')
 
 if __name__ == "__main__":
     count = 0
@@ -59,6 +70,10 @@ if __name__ == "__main__":
                     if 'Exception' in line:
                         print(line)
                         exception += 1
-        print('tested:', test_num, 'error:', runtime_error, 'exception:', exception)
-
-
+        tested_sum = tested_sum + test_num
+        error_sum = error_sum + runtime_error
+        exception_sum = exception_sum + exception
+        print('tested:', tested_sum, 'error:', error_sum, 'exception:', exception_sum)
+        print_time(starttime)
+        if(exception_sum > 0):
+            break

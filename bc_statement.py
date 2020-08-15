@@ -11,13 +11,14 @@ import subprocess
 import gramfuzz
 import datetime
 
-input_number = 10
+file_number = 10 # In every loop, how many input file will be generated and tested.
+input_number = 5 # In every file, how many input will be generated according to grammar.
 def generate_input():
     fuzzer = gramfuzz.GramFuzzer()
     fuzzer.load_grammar("./statement_grammar.py")
-    for i in range(input_number):
+    for i in range(file_number):
         print('Generating: input{}'.format(i))
-        bc_inputs = fuzzer.gen(cat="bc_input", num=3)
+        bc_inputs = fuzzer.gen(cat="bc_input", num=input_number)
         with open('statement_input{}'.format(i), 'w') as f:
             for bc_input in bc_inputs:
                 f.write(bc_input.decode('utf-8') + '\n')
@@ -41,7 +42,7 @@ if __name__ == "__main__":
         runtime_error = 0
         exception = 0
         test_num = 0
-        for i in range(input_number):
+        for i in range(file_number):
             try:
                 # result = subprocess.check_output(['python', 'except.py'], stderr=subprocess.STDOUT).decode('utf-8')
                 result = subprocess.check_output('bc -l statement_input{}'.format(i), shell=True, stderr=subprocess.STDOUT).decode(

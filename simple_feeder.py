@@ -63,7 +63,7 @@ if __name__ == "__main__":
         elif benchmark == 'c':
             command = 'calc -f input{}'
             while True:
-                grammar = input("Choose grammar: a for arithmetic, s for statement")
+                grammar = input("Choose grammar: a for arithmetic, s for statement \n")
                 if grammar == 'a':
                     file_path="./arith_grammar.py"
                     break

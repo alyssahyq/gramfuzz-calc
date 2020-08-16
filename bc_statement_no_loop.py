@@ -23,11 +23,11 @@ array_i = Join(variable_name,'[',array_ind,']',sep='')
 var_post = Join(Or(variable_name,variable_name,variable_name,array_i),Or('++','--'),sep='')
 var_pre = Join(Or('++','--'),Or(variable_name,variable_name,variable_name,array_i),sep='')
 variable_list = Or(array,array,variable_name,variable_name,variable_name,array_i,var_post,var_pre)
-para_list = Join(variable_list,Opt(Join(Join(',',variable_list,sep=''),max=statement_max ,sep=' ')),sep=' ')
+para_list = Join(variable_list,max=statement_max ,sep=',')
 call_function = Join(function_name,'(',para_list,')',sep='')
 variable_odd =  Or(array,array,variable_name,variable_name,variable_name,array_i,call_function,call_function,call_function,
                    var_post,var_pre)
-
+print=Join('print(',variable_odd,')',sep='')
 assign_operation = Or('=','+=','-=','*=','/=','%=')
 arith_operation = Or('+','-','*','/','%')
 arith_expr = Join(Or(variable_odd,NRef('int')),
@@ -41,7 +41,7 @@ condition = Join(arith_expr,expr_operation,arith_expr,sep=' ')
 
 auto = Join('auto',variable_odd,Opt(Join(',',variable_odd,sep=' ')),sep=' ')
 
-statement = Join(Or(auto,assign,assign,assign,call_function,call_function),max=statement_max,sep='\n')
+statement = Join(Or(auto,assign,assign,assign,call_function,call_function,print),max=statement_max,sep='\n')
 
 
 if_else = Join('if (',condition,'){','\n',
@@ -59,6 +59,6 @@ def_fun = Join('define ',function_name,'(',para_list,'){','\n',
                ,sep='')
 
 Def("bc_input",
-    Join(Or(def_fun,assign,call_function,auto,if_else),max=statement_max,sep="\n"),
+    Join(Or(def_fun,statement,statement,statement,if_else),max=statement_max,sep="\n"),
     cat="bc_input"
 )

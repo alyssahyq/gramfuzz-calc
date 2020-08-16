@@ -20,7 +20,7 @@ function_name = Or('fun0','fun1','fun2')
 variable_name = Or('a','b','c','d')
 array = Join(variable_name,'[]',sep='')
 variable_list = Or(array,variable_name)
-para_list = Join(variable_list,Opt(Join(Join(',',variable_list,sep=''),max=statement_max ,sep=' ')),sep=' ')
+para_list = Join(variable_list,max=statement_max ,sep=',')
 call_function = Join(function_name,'(',para_list,')',sep='')
 variable_odd =  Or(array,variable_name)
 
@@ -36,6 +36,6 @@ def_fun = Join('define ',function_name,'(',para_list,'){','\n',
                ,sep='')
 
 Def("bc_input",
-    Join(Or(def_fun,assign,call_function),max=statement_max,sep="\n"),
+    Join(Or(def_fun,statement,statement,statement),max=statement_max,sep="\n"),
     cat="bc_input"
 )

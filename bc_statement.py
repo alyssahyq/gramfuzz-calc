@@ -45,6 +45,8 @@ if __name__ == "__main__":
     exception_sum = 0
     starttime = datetime.datetime.now()
     while True:
+        if (exception_sum > 0):
+            break
         generate_input()
         result = ''
         runtime_error = 0
@@ -78,7 +80,5 @@ if __name__ == "__main__":
         print('exception_sum', exception_sum)
         #print('tested:', tested_sum, 'error:', error_sum, 'exception:', exception_sum)
         print_time(starttime)
-        if(exception_sum > 0):
-            break
 
 

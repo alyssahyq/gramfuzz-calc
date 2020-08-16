@@ -13,7 +13,7 @@ import gramfuzz
 
 def generate_input():
     fuzzer = gramfuzz.GramFuzzer()
-    fuzzer.load_grammar("./bc_grammar.py")
+    fuzzer.load_grammar("./arith_grammar.py")
     for i in range(100):
         print('Generating: input{}'.format(i))
         bc_inputs = fuzzer.gen(cat="bc_input", num=1000)
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     for i in range(100):
         try:
             #result = subprocess.check_output(['python', 'except.py'], stderr=subprocess.STDOUT).decode('utf-8')
-            result = subprocess.check_output('bc -l input{}'.format(i), shell=True, stderr=subprocess.STDOUT).decode('utf-8')
+            result = subprocess.check_output('calc -f input{}'.format(i), shell=True, stderr=subprocess.STDOUT).decode('utf-8')
         except Exception as e:
             result = 'Exception: {}'.format(e);
         finally: 

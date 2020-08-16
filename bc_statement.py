@@ -15,7 +15,7 @@ file_number = 5 # In every loop, how many input file will be generated and teste
 input_number = 5 # In every file, how many input will be generated according to grammar.
 def generate_input():
     fuzzer = gramfuzz.GramFuzzer()
-    fuzzer.load_grammar("./statement_grammar.py")
+    fuzzer.load_grammar("./bc_statement_grammar.py")
     for i in range(file_number):
         print('Generating: input{}'.format(i))
         bc_inputs = fuzzer.gen(cat="bc_input", num=input_number)

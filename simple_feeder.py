@@ -13,13 +13,13 @@ import datetime
 
 file_number = 5 # In every loop, how many input file will be generated and tested.
 input_number = 5 # In every file, how many input will be generated according to grammar.
-def generate_input():
+def generate_input(file_path):
     fuzzer = gramfuzz.GramFuzzer()
-    fuzzer.load_grammar("./bc_statement_grammar.py")
+    fuzzer.load_grammar(file_path)
     for i in range(file_number):
         print('Generating: input{}'.format(i))
         bc_inputs = fuzzer.gen(cat="bc_input", num=input_number)
-        with open('statement_input{}'.format(i), 'w') as f:
+        with open('input{}'.format(i), 'w') as f:
             for bc_input in bc_inputs:
                 f.write(bc_input.decode('utf-8') + '\n')
             f.write('quit')
@@ -39,6 +39,38 @@ def print_time(starttime):
         print('Elapsed time: ',hour,' hours ',minute%60,' minutes ',second%60,' seconds.')
 
 if __name__ == "__main__":
+    command = ''
+    file_path = ''
+    while True:
+        benchmark = input("Choose benchmark: b for bc, c for calc, q for qalc \n")
+        if benchmark == 'b':
+            command = 'bc -l input{}'
+            while True:
+                grammar = input("Choose grammar: a for arithmetic, s for statement, n for no loop, t for target \n")
+                if grammar == 'a':
+                    file_path="./arith_grammar.py"
+                    break
+                elif grammar == 's':
+                    file_path="./bc_statement_grammar.py"
+                    break
+                elif grammar == 'n':
+                    file_path="./bc_statement_no_loop.py"
+                    break
+                elif grammar == 't':
+                    file_path="./bc_statement_target.py"
+                    break
+            break
+        elif benchmark == 'c':
+            command = 'calc -f input{}'
+            while True:
+                grammar = input("Choose grammar: a for arithmetic, s for statement")
+                if grammar == 'a':
+                    file_path="./arith_grammar.py"
+                    break
+                elif grammar == 's':
+                    file_path="./calc_statement_grammar.py"
+                    break
+            break
     count = 0
     tested_sum = 0
     error_sum = 0
@@ -47,7 +79,7 @@ if __name__ == "__main__":
     while True:
         if (exception_sum > 0):
             break
-        generate_input()
+        generate_input(file_path)
         result = ''
         runtime_error = 0
         exception = 0
@@ -55,7 +87,7 @@ if __name__ == "__main__":
         for i in range(file_number):
             try:
                 # result = subprocess.check_output(['python', 'except.py'], stderr=subprocess.STDOUT).decode('utf-8')
-                result = subprocess.check_output('bc -l statement_input{}'.format(i), shell=True, stderr=subprocess.STDOUT).decode(
+                result = subprocess.check_output('command'.format(i), shell=True, stderr=subprocess.STDOUT).decode(
                     'utf-8')
                 print("input",i,"tested.")
             except Exception as e:

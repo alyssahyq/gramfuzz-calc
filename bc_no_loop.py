@@ -21,7 +21,10 @@ array = Join(variable_name,'[]',sep='')
 array_i = Join(variable_name,'[',array_ind,']',sep='')
 var_post = Join(Or(variable_name,variable_name,variable_name,array_i),Or('++','--'),sep='')
 var_pre = Join(Or('++','--'),Or(variable_name,variable_name,variable_name,array_i),sep='')
-variable_odd = Or(array,array,variable_name,variable_name,variable_name,array_i,var_post,var_pre)
+variable_list = Or(array,array,variable_name,variable_name,variable_name,array_i,var_post,var_pre)
+call_function = Join(function_name,'(',variable_list')',sep='')
+variable_odd =  Or(array,array,variable_name,variable_name,variable_name,array_i,call_function,call_function,call_function,
+                   var_post,var_pre)
 
 
 assign_operation = Or('=','+=','-=','*=','/=','%=')

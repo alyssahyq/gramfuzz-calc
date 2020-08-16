@@ -15,13 +15,16 @@ statement_max = 5 # Maximum of the times the elements occur in this part randoml
 
 NDef('int',Int(odds = [(0.05,[0]),(0.85,[-100,100])])) # INT_MAX
 array_ind = Or(0,1,2,3,4,5,6,7,8,9)
-function_name = Or('fun0','fun1','fun2','fun3','fun4','fun5','fun6','fun7','fun8','fun9')
+function_name = Or('fun0','fun1','fun2','fun3','fun4')
 variable_name = Or('a','b','c','d')
-variable_odd = Or(Join(variable_name,'[]',sep=''),
-                  variable_name,variable_name,variable_name,variable_name,variable_name,variable_name,
-                  Join(variable_name,'[',array_ind,']',sep=''))
-var_post = Join(variable_odd,Or('++','--'),sep='')
-var_pre = Join(Or('++','--'),variable_odd,sep='')
+array = Join(variable_name,'[]',sep='')
+array_i = Join(variable_name,'[',array_ind,']',sep='')
+var_post = Join(Or(variable_name,variable_name,variable_name,array_i),Or('++','--'),sep='')
+var_pre = Join(Or('++','--'),Or(variable_name,variable_name,variable_name,array_i),sep='')
+variable_list = Or(array,array,variable_name,variable_name,variable_name,array_i,var_post,var_pre)
+call_function = Join(function_name,'(',variable_list')',sep='')
+variable_odd =  Or(array,array,variable_name,variable_name,variable_name,array_i,call_function,call_function,call_function,
+                   var_post,var_pre)
 
 assign_operation = Or('=','+=','-=','*=','/=','^=','%=')
 arith_operation = Or('+','-','*','/','%','^')

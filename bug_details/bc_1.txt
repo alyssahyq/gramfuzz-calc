@@ -1,0 +1,53 @@
+define fun2(c[] ,b ,a ,c){
+fun2(d)
+fun0(c ,d[])
+d = c
+fun1(c)
+}
+fun2(d[] ,b[] ,a[])
+define fun0(b[]){
+d[] *= c[]
+d += d
+a *= b
+c[] *= b
+return a
+}
+c += a[]
+define fun2(a[] ,b[] ,a){
+b -= b
+b *= d[]
+c[] *= b[]
+fun1(a ,c[] ,c ,a ,b[] ,c[])
+return d
+}
+fun2(a)
+define fun2(d ,d ,c){
+fun2(d[])
+d[] -= c[]
+fun1(d[])
+}
+fun2(a ,b)
+d[] += b[]
+define fun2(a ,c ,d[] ,a){
+c += a[]
+fun1(c)
+return a[]
+}
+b[] *= d[]
+fun1(c)
+define fun0(c[]){
+d[] += a
+d[] -= c
+d *= c
+}
+fun2(b ,c)
+fun1(a)
+b += d[]
+d[] *= a[]
+d[] -= a[]
+define fun2(b[]){
+a += d[]
+c -= c[]
+c = c[]
+}
+quit

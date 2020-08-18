@@ -40,7 +40,7 @@ class NDef(Def):
     cat = "name_def"
 #134217729 is the biggest int that will not trigger "error: exponent too large in raise"
 NDef("int", Int(odds = [(0.000000000000001,[0]),(0.99,[-134217729,134217729])]))
-NDef("float",Float(odds = [(0.000000000000001,[0]),(0.85,[-100,100])])))
+NDef("float",Float(odds = [(0.000000000000001,[0]),(0.99,[-134217729,134217729])]))
 NDef("arithmetic_operator",Or('+','-','*','%','/','^'))
 NDef("relational_operator",Or('<','<=','>','>=','==','!='))
 NDef("boolean_operator",Or('||','&&'))

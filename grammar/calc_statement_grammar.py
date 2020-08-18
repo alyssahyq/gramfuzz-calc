@@ -39,7 +39,7 @@ assign = Join(variable_odd,assign_operation,arith_expr,sep=' ')
 expr_operation = Or('>','<','>=','<=','==','!=')
 condition = Join(arith_expr,expr_operation,arith_expr,sep=' ')
 
-auto = Join('auto',Join(variable_odd,max=statement_max,sep=','),sep=' ')
+auto = Join('local',Join(variable_odd,max=statement_max,sep=','),sep=' ')
 
 statement = Join(Or(auto,assign,assign,assign,call_function,call_function,print),max=statement_max,sep=';')
 

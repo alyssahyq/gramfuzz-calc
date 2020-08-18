@@ -48,16 +48,10 @@ if __name__ == "__main__":
             while True:
                 grammar = input("Choose grammar: a for arithmetic, s for statement, n for no loop, t for target \n")
                 if grammar == 'a':
-                    file_path="./arith_grammar.py"
+                    file_path="./grammar/arith_grammar.py"
                     break
                 elif grammar == 's':
-                    file_path="./bc_statement_grammar.py"
-                    break
-                elif grammar == 'n':
-                    file_path="./bc_statement_no_loop.py"
-                    break
-                elif grammar == 't':
-                    file_path="./bc_statement_target.py"
+                    file_path="./grammar/bc_statement_grammar.py"
                     break
             break
         elif benchmark == 'c':
@@ -65,10 +59,10 @@ if __name__ == "__main__":
             while True:
                 grammar = input("Choose grammar: a for arithmetic, s for statement \n")
                 if grammar == 'a':
-                    file_path="./arith_grammar.py"
+                    file_path="./grammar/arith_grammar.py"
                     break
                 elif grammar == 's':
-                    file_path="./calc_statement_grammar.py"
+                    file_path="./grammar/calc_statement_grammar.py"
                     break
             break
     count = 0

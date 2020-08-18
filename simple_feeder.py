@@ -10,9 +10,11 @@ import os
 import subprocess
 import gramfuzz
 import datetime
+from pyZZUF.pyZZUF import pyZZUF
 
 file_number = 5 # In every loop, how many input file will be generated and tested.
 input_number = 5 # In every file, how many input will be generated according to grammar.
+
 def generate_input(file_path):
     fuzzer = gramfuzz.GramFuzzer()
     fuzzer.load_grammar(file_path)
@@ -25,6 +27,36 @@ def generate_input(file_path):
             f.write('quit')
         #print('Finished: input{}'.format(i))
     print('Finished generated inputs')
+
+def choose_fuzzer(c,file_path):
+    if c == 'g':
+        generate_input(file_path)
+    if c == 'm':
+        f = open(file_path)
+        seed_input = f.read()
+        seed_byte = seed_input.encode('utf-8')
+        zzuf = pyZZUF(seed_byte)
+        f.close()
+        zzuf.set_protected('quit', True)
+        zzuf.set_protected('if', True)
+        zzuf.set_protected('else', True)
+        zzuf.set_protected('define', True)
+        zzuf.set_protected('auto', True)
+        zzuf.set_protected('local', True)
+        zzuf.set_protected('{', True)
+        zzuf.set_protected('}', True)
+        for i in range(file_number):
+            print('Generating: input{}'.format(i))
+            zzuf_array =zzuf.mutate()
+            bc_input=''
+            for j in range(len(zzuf_array)):
+                bc_input=bc_input+chr(zzuf_array[j])
+            with open('input{}'.format(i), 'w') as f:
+                f.write(bc_input)
+                f.write('quit')
+            # print('Finished: input{}'.format(i))
+        print('Finished generated inputs')
+
 
 def print_time(starttime):
     endtime = datetime.datetime.now()
@@ -41,28 +73,43 @@ def print_time(starttime):
 if __name__ == "__main__":
     command = ''
     file_path = ''
+    c = ''
     while True:
-        benchmark = input("Choose benchmark: b for bc, c for calc, q for qalc \n")
+        while (c!='g' and c!='m'):
+            c = input("Choose fuzzer: g for grammar-based, m for mutation-based \n")
+        benchmark = input("Choose benchmark: b for bc, c for calc \n")
         if benchmark == 'b':
             command = 'bc -l input{}'
             while True:
-                grammar = input("Choose grammar: a for arithmetic, s for statement, n for no loop, t for target \n")
-                if grammar == 'a':
+                grammar = input("Choose grammar: a for arithmetic, s for statement \n")
+                if grammar == 'a' and c == 'g':
                     file_path="./grammar/arith_grammar.py"
                     break
-                elif grammar == 's':
+                elif grammar == 'a' and c == 'm':
+                    file_path="./input/arithmetic_input"
+                    break
+                elif grammar == 's' and c == 'g':
                     file_path="./grammar/bc_statement_grammar.py"
+                    break
+                elif grammar == 's' and c == 'm':
+                    file_path = "./input/bc_input"
                     break
             break
         elif benchmark == 'c':
             command = 'calc -f input{}'
             while True:
                 grammar = input("Choose grammar: a for arithmetic, s for statement \n")
-                if grammar == 'a':
+                if grammar == 'a' and c == 'g':
                     file_path="./grammar/arith_grammar.py"
                     break
-                elif grammar == 's':
+                elif grammar == 'a' and c == 'm':
+                    file_path="./input/arithmetic_input"
+                    break
+                elif grammar == 's' and c == 'g':
                     file_path="./grammar/calc_statement_grammar.py"
+                    break
+                elif grammar == 's' and c == 'm':
+                    file_path = "./input/calc_input"
                     break
             break
     count = 0
@@ -73,7 +120,7 @@ if __name__ == "__main__":
     while True:
         if (exception_sum > 0):
             break
-        generate_input(file_path)
+        choose_fuzzer(c,file_path)
         result = ''
         runtime_error = 0
         exception = 0

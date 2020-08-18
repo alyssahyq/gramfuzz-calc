@@ -14,16 +14,33 @@ Assignment operator, right associative
 *, / and % operators, left associative
 ^ operator, right associative
 unary - operator, nonassociative
-++ and -- operators, nonassociative'''
+++ and -- operators, nonassociative
+
+Limits
+BC_BASE_MAX
+The maximum output base is currently set at 999. The maximum input base is 16.
+BC_DIM_MAX
+This is currently an arbitrary limit of 65535 as distributed. Your installation may be different.
+BC_SCALE_MAX
+The number of digits after the decimal point is limited to INT_MAX digits. Also, the number of digits before the decimal point is limited to INT_MAX digits.
+BC_STRING_MAX
+The limit on the number of characters in a string is INT_MAX characters.
+exponent
+The value of the exponent in the raise operation (^) is limited to LONG_MAX.
+multiply
+The multiply routine may yield incorrect results if a number has more than LONG_MAX / 90 total digits. For 32 bit longs, this number is 23,860,929 digits.
+variable names
+The current limit on the number of unique names is 32767 for each of simple variables, arrays and functions.
+'''
 
 
 class NRef(Ref):
     cat = "name_def"
 class NDef(Def):
     cat = "name_def"
-
-NDef("int", Int(value=None))
-NDef("float",Float(value=None))
+#134217729 is the biggest int that will not trigger "error: exponent too large in raise"
+NDef("int", Int(odds = [(0.000000000000001,[0]),(0.90,[-134217729,134217729])]))
+NDef("float",Float(odds = [(0.000000000000001,[0]),(0.85,[-100,100])])))
 NDef("arithmetic_operator",Or('+','-','*','%','/','^'))
 NDef("relational_operator",Or('<','<=','>','>=','==','!='))
 NDef("boolean_operator",Or('||','&&'))

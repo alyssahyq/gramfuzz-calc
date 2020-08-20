@@ -33,27 +33,33 @@ def choose_fuzzer(c,file_path):
         generate_input(file_path)
     if c == 'm':
         f = open(file_path)
-        seed_input = f.read()
-        seed_byte = seed_input.encode('utf-8')
-        zzuf = pyZZUF(seed_byte)
+        init = f.read()
         f.close()
-        zzuf.set_protected('quit', True)
-        zzuf.set_protected('if', True)
-        zzuf.set_protected('else', True)
-        zzuf.set_protected('define', True)
-        zzuf.set_protected('auto', True)
-        zzuf.set_protected('local', True)
-        zzuf.set_protected('{', True)
-        zzuf.set_protected('}', True)
+        with open('seed_init', 'w') as f:
+            f.write(init)
         for i in range(file_number):
             print('Generating: input{}'.format(i))
+            f = open('seed_init')
+            seed_input = f.read()
+            f.close()
+            seed_byte = seed_input.encode('utf-8')
+            zzuf = pyZZUF(seed_byte)
+            zzuf.set_protected('quit', True)
+            zzuf.set_protected('if', True)
+            zzuf.set_protected('else', True)
+            zzuf.set_protected('define', True)
+            zzuf.set_protected('auto', True)
+            zzuf.set_protected('local', True)
+            zzuf.set_protected('{', True)
+            zzuf.set_protected('}', True)
             zzuf_array =zzuf.mutate()
             bc_input=''
             for j in range(len(zzuf_array)):
                 bc_input=bc_input+chr(zzuf_array[j])
             with open('input{}'.format(i), 'w') as f:
                 f.write(bc_input)
-                f.write('quit')
+            with open('seed_init', 'w') as ff:
+                ff.write(bc_input)
             # print('Finished: input{}'.format(i))
         print('Finished generated inputs')
 

@@ -6,20 +6,24 @@ Author: Sujia Yin
 Date: 2020-08-14 21:43:19
 Version: 1.0
 '''
+import abc
 import gramfuzz
 from pyZZUF.pyZZUF import pyZZUF
 
 
-class Generator(object):
+class Generator(metaclass = abc.ABCMeta):
     def __init__(self, feed, file_num):
         self._feed = feed
         self._file_num = file_num
     
-    def genetate(self):
+    @abc.abstractclassmethod
+    def generate(self):
         pass
+
 
 class GramGenerator(Generator):
     def generate(self):
+        print('\nGenerating seeds...')
         fuzzer = gramfuzz.GramFuzzer()
         fuzzer.load_grammar(self._feed)
         for i in range(self._file_num):
@@ -28,9 +32,12 @@ class GramGenerator(Generator):
                 for bc_input in bc_inputs:
                     f.write(bc_input.decode('utf-8') + '\n')
                 f.write('quit')
+        print('{} files generated. Start fuzzing...'.format(self._file_num))
+
 
 class MutateGenerator(Generator):
     def generate(self):
+        print('\nGenerating seeds...')
         f = open(self._feed)
         seed_input = f.read()
         seed_byte = seed_input.encode('utf-8')
@@ -52,3 +59,4 @@ class MutateGenerator(Generator):
             with open('input/input{}'.format(i), 'w') as f:
                 f.write(bc_input)
                 f.write('quit')
+        print('{} files generated. Start fuzzing...'.format(self._file_num))

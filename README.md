@@ -1,10 +1,7 @@
 # gramfuzz-calc
-We plan to specify grammars of inputs for three selected benchmarks, which share similar API and grammars of inputs. Then we will use these grammars as the seeds to generate well-formated inputs via gramfuzz, a Python-based grammer fuzzer, to penetrate deep into benchmarks’ parsers. We expect that some potential errors of benchmarks would be detected in this project. In addition, we plan to design a runner program, which can feed the inputs into the benchmarks automatically, as enhancements to gramfuzz.
+We build a grammar-based fuzzer using [gramfuzz](https://github.com/d0c-s4vage/gramfuzz) and a mutation-based fuzzer using[pyZZUF](https://github.com/nezlooy/pyZZUF). And we designed a runner program to select the program-under-test,[bc](https://www.gnu.org/software/bc/manual/html_mono/bc.html) or [calc](https://www.systutorials.com/docs/linux/man/1-calc/), and its grammar, arithmetic calulation or program statement, feed the inputs automatically, save suspicious inputs and display the testing status in an interface.
 
-## Grammar files:
-* General use
-    - arith_grammar.py: Grammar of arithmetic calculation, suits bc, calc and qalc
-* bc
-    - bc_statement_grammar.py: Grammar of bc statements, including defining/calling functions, assignment statements, if-else, while loop, for loop.
-    - bc_statement_no_loop.py: No loop and exponential calculation, avoiding infinite loops or long calculation time
-    - bc_statement_target.py: Grammar of found bugs.
+## Run our runner program
+'''
+jupyter notebook interface.ipynb
+'''

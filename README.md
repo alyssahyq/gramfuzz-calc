@@ -5,3 +5,4 @@ We build a grammar-based fuzzer using [gramfuzz](https://github.com/d0c-s4vage/g
 ```
 jupyter notebook interface.ipynb
 ```
+The results will be saved in ./exp_out
